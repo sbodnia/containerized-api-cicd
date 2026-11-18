@@ -1,0 +1,5 @@
+.git
+upstream
+certs
+node_modules
+*.md
