@@ -110,7 +110,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Trivy image scan
-        uses: aquasecurity/trivy-action@3f6334d223b52188324af3b9923b4249cd206652 #v0.76.2
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 #v0.36.0
         with:
           image-ref: ${{ env.IMAGE }}:${{ github.sha }}
           severity: CRITICAL,HIGH
