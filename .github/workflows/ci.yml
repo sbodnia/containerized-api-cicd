@@ -110,9 +110,27 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Trivy image scan
-        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 #v0.36.0
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: ${{ env.IMAGE }}:${{ github.sha }}
+          format: json
+          output: trivy.json
           severity: CRITICAL,HIGH
           ignore-unfixed: true
-          exit-code: '1'
+          exit-code: '0'
+      - name: Publish Trivy summary
+        if: always()
+        run: |
+          {
+            echo "## 🔒 Trivy scan"
+            echo ""
+            echo "| Package | CVE | Severity | Installed | Fixed |"
+            echo "|---|---|---|---|---|"
+            jq -r 'limit(50; .Results[]? | .Vulnerabilities[]? |
+              "| \(.PkgName) | \(.VulnerabilityID) | \(.Severity) | \(.InstalledVersion) | \(.FixedVersion // "-") |")' trivy.json
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Gate on severity
+        run: |
+          count=$(jq '[.Results[]?.Vulnerabilities[]? | select(.Severity=="CRITICAL" or .Severity=="HIGH")] | length' trivy.json)
+          echo "HIGH/CRITICAL findings: $count"
+          [ "$count" -eq 0 ]
