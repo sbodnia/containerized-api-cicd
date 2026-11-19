@@ -37,3 +37,30 @@ jobs:
         working-directory: upstream/src
       - run: npm run lint
         working-directory: upstream/src
+
+  test:
+    name: Test
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
+        with:
+          submodules: true
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 #v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: upstream/src/package-lock.json
+      - run: npm ci
+        working-directory: upstream/src
+      - name: Start app
+        run: |
+          node --expose_gc server.mjs &
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:3000/ && exit 0
+            sleep 1
+          done
+          exit 1
+        working-directory: upstream/src
+      - run: npm test
+        working-directory: upstream/src
