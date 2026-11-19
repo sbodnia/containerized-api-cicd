@@ -5,7 +5,7 @@ Dockerized service with a multi-stage build, non-root runtime, GitHub Actions pi
 
 The application source is pulled in as a pinned Git submodule (`upstream/`, [benc-uk/nodejs-demoapp](https://github.com/benc-uk/nodejs-demoapp)), so this repository contains only the packaging and pipeline code.
 
-![CI](https://github.com/<your-login>/containerized-api-cicd/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/sbodnia/containerized-api-cicd/actions/workflows/ci.yml/badge.svg)
 
 ## What's inside
 
